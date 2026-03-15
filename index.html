@@ -1,0 +1,2013 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0d1a">
+    <title>JEE Prep Meter 2028</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent
+        }
+
+        :root {
+            --bg: #0a0d1a;
+            --surface: #111628;
+            --surface2: #181d34;
+            --surface3: #1e2440;
+            --border: #252d4a;
+            --border2: #2e3860;
+            --phy: #3b82f6;
+            --phy-dim: #1e3a6e;
+            --phy-glow: #3b82f620;
+            --chem: #22c55e;
+            --chem-dim: #14532d;
+            --chem-glow: #22c55e20;
+            --math: #f59e0b;
+            --math-dim: #78350f;
+            --math-glow: #f59e0b20;
+            --accent: #f59e0b;
+            --accent-soft: #f59e0b15;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --hint: #475569;
+            --font: 'Plus Jakarta Sans', sans-serif;
+            --mono: 'Space Mono', monospace;
+            --r4: 4px;
+            --r8: 8px;
+            --r12: 12px;
+            --r16: 16px;
+            --r20: 20px;
+            --r99: 99px;
+            --shadow: 0 4px 24px #00000040;
+            --sidebar: 280px;
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 15px;
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden
+        }
+
+        /* ── LAYOUT ── */
+        .app-shell {
+            display: flex;
+            min-height: 100vh
+        }
+
+        .sidebar {
+            width: var(--sidebar);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 100;
+            transition: transform 0.3s cubic-bezier(.4, 0, .2, 1)
+        }
+
+        .main {
+            margin-left: var(--sidebar);
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column
+        }
+
+        .topbar {
+            height: 64px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 50
+        }
+
+        .content {
+            padding: 24px;
+            max-width: 1200px;
+            width: 100%
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar-header {
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--math), #ef4444);
+            border-radius: var(--r8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0
+        }
+
+        .brand-name {
+            font-family: var(--mono);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 1px;
+            line-height: 1.3
+        }
+
+        .brand-sub {
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 2px;
+            text-transform: uppercase
+        }
+
+        .overall-mini {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--r12);
+            padding: 12px;
+            margin: 0 0 4px
+        }
+
+        .overall-mini-label {
+            font-size: 10px;
+            color: var(--muted);
+            font-family: var(--mono);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px
+        }
+
+        .overall-mini-row {
+            display: flex;
+            align-items: baseline;
+            gap: 6px
+        }
+
+        .overall-mini-pct {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: var(--mono);
+            color: var(--accent);
+            line-height: 1
+        }
+
+        .overall-mini-frac {
+            font-size: 11px;
+            color: var(--muted)
+        }
+
+        .mini-bar {
+            height: 4px;
+            background: var(--surface3);
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden
+        }
+
+        .mini-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--math), var(--phy));
+            border-radius: 2px;
+            transition: width 0.5s ease
+        }
+
+        .nav-section {
+            padding: 12px 12px 4px
+        }
+
+        .nav-label {
+            font-size: 10px;
+            color: var(--muted);
+            font-family: var(--mono);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 0 8px;
+            margin-bottom: 4px
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: var(--r8);
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+            margin-bottom: 2px
+        }
+
+        .nav-item:hover {
+            background: var(--surface2);
+            border-color: var(--border)
+        }
+
+        .nav-item.active {
+            background: var(--accent-soft);
+            border-color: var(--accent)30
+        }
+
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0
+        }
+
+        .nav-item-name {
+            font-size: 13px;
+            font-weight: 500;
+            flex: 1
+        }
+
+        .nav-item.active .nav-item-name {
+            color: var(--accent)
+        }
+
+        .nav-pct {
+            font-size: 11px;
+            font-family: var(--mono);
+            color: var(--muted)
+        }
+
+        .nav-item.active .nav-pct {
+            color: var(--accent)
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 16px;
+            border-top: 1px solid var(--border)
+        }
+
+        .exam-countdown {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--r12);
+            padding: 12px;
+            text-align: center
+        }
+
+        .cd-label {
+            font-size: 10px;
+            color: var(--muted);
+            font-family: var(--mono);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px
+        }
+
+        .cd-days {
+            font-size: 26px;
+            font-weight: 700;
+            font-family: var(--mono);
+            color: var(--phy)
+        }
+
+        .cd-sub {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 2px
+        }
+
+        /* ── TOPBAR ── */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 4px;
+            background: none;
+            border: none
+        }
+
+        .hamburger span {
+            width: 20px;
+            height: 2px;
+            background: var(--text);
+            border-radius: 1px;
+            transition: all 0.2s
+        }
+
+        .topbar-title {
+            font-size: 16px;
+            font-weight: 600;
+            flex: 1
+        }
+
+        .topbar-subject-badge {
+            padding: 4px 12px;
+            border-radius: var(--r99);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: var(--mono)
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--r8);
+            padding: 6px 12px;
+            flex: 1;
+            max-width: 320px
+        }
+
+        .search-box input {
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text);
+            font-size: 13px;
+            font-family: var(--font);
+            width: 100%
+        }
+
+        .search-box input::placeholder {
+            color: var(--muted)
+        }
+
+        .search-icon {
+            color: var(--muted);
+            font-size: 14px;
+            flex-shrink: 0
+        }
+
+        /* ── DASHBOARD STATS ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 24px
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r16);
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.2s
+        }
+
+        .stat-card:hover {
+            border-color: var(--border2)
+        }
+
+        .stat-card.phy {
+            --c: var(--phy);
+            --cg: var(--phy-glow)
+        }
+
+        .stat-card.chem {
+            --c: var(--chem);
+            --cg: var(--chem-glow)
+        }
+
+        .stat-card.math {
+            --c: var(--math);
+            --cg: var(--math-glow)
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--c);
+            border-radius: var(--r16) var(--r16) 0 0
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px
+        }
+
+        .stat-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--r8);
+            background: var(--cg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px
+        }
+
+        .stat-badge {
+            font-size: 10px;
+            font-family: var(--mono);
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: var(--r99);
+            background: var(--cg);
+            color: var(--c)
+        }
+
+        .stat-num {
+            font-size: 30px;
+            font-weight: 700;
+            font-family: var(--mono);
+            color: var(--c);
+            line-height: 1;
+            margin-bottom: 2px
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 8px
+        }
+
+        .stat-bar {
+            height: 3px;
+            background: var(--surface3);
+            border-radius: 2px;
+            overflow: hidden
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            background: var(--c);
+            border-radius: 2px;
+            transition: width 0.6s ease
+        }
+
+        .stat-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 4px;
+            font-family: var(--mono)
+        }
+
+        /* ── OVERALL HERO ── */
+        .hero-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r20);
+            padding: 24px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            position: relative;
+            overflow: hidden
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--phy-glow), var(--math-glow));
+            pointer-events: none
+        }
+
+        .hero-ring-wrap {
+            flex-shrink: 0;
+            position: relative;
+            width: 120px;
+            height: 120px
+        }
+
+        .hero-ring-wrap svg {
+            transform: rotate(-90deg)
+        }
+
+        .hero-ring-center {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center
+        }
+
+        .hero-pct {
+            font-size: 24px;
+            font-weight: 700;
+            font-family: var(--mono);
+            color: var(--accent);
+            line-height: 1
+        }
+
+        .hero-pct-lbl {
+            font-size: 9px;
+            color: var(--muted);
+            font-family: var(--mono);
+            text-transform: uppercase;
+            letter-spacing: 1px
+        }
+
+        .hero-info {
+            flex: 1;
+            min-width: 0
+        }
+
+        .hero-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px
+        }
+
+        .hero-subtitle {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 16px
+        }
+
+        .hero-meta-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap
+        }
+
+        .hero-meta-item {
+            display: flex;
+            flex-direction: column
+        }
+
+        .hero-meta-num {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: var(--mono);
+            color: var(--text)
+        }
+
+        .hero-meta-lbl {
+            font-size: 11px;
+            color: var(--muted)
+        }
+
+        .hero-subject-bars {
+            margin-top: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px
+        }
+
+        .hsb-row {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .hsb-label {
+            font-size: 11px;
+            font-family: var(--mono);
+            width: 36px;
+            color: var(--muted)
+        }
+
+        .hsb-bar {
+            flex: 1;
+            height: 5px;
+            background: var(--surface3);
+            border-radius: 3px;
+            overflow: hidden
+        }
+
+        .hsb-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.6s ease
+        }
+
+        .hsb-pct {
+            font-size: 11px;
+            font-family: var(--mono);
+            width: 32px;
+            text-align: right;
+            color: var(--muted)
+        }
+
+        /* ── CHAPTERS VIEW ── */
+        .view-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px
+        }
+
+        .view-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .view-subject-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0
+        }
+
+        .view-title {
+            font-size: 20px;
+            font-weight: 700
+        }
+
+        .view-subtitle {
+            font-size: 12px;
+            color: var(--muted);
+            font-family: var(--mono)
+        }
+
+        .view-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--surface2);
+            padding: 3px;
+            border-radius: var(--r8);
+            border: 1px solid var(--border)
+        }
+
+        .filter-tab {
+            padding: 5px 12px;
+            border-radius: var(--r4);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-family: var(--mono);
+            transition: all 0.15s
+        }
+
+        .filter-tab.active {
+            background: var(--surface);
+            color: var(--text);
+            box-shadow: 0 1px 4px #00000030
+        }
+
+        .add-ch-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--accent);
+            color: #1a0d00;
+            border: none;
+            border-radius: var(--r8);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: var(--mono);
+            transition: opacity 0.15s
+        }
+
+        .add-ch-btn:hover {
+            opacity: 0.9
+        }
+
+        /* ── CHAPTER CARD ── */
+        .chapters-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .chapter-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r12);
+            overflow: hidden;
+            transition: border-color 0.15s, box-shadow 0.15s
+        }
+
+        .chapter-card:hover {
+            border-color: var(--border2);
+            box-shadow: var(--shadow)
+        }
+
+        .chapter-card.expanded {
+            border-color: var(--c, var(--accent))40;
+            box-shadow: 0 0 0 1px var(--c, var(--accent))15
+        }
+
+        .chapter-card.complete {
+            border-color: var(--success)40
+        }
+
+        .ch-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            cursor: pointer;
+            user-select: none
+        }
+
+        .ch-ring {
+            flex-shrink: 0;
+            position: relative;
+            width: 44px;
+            height: 44px
+        }
+
+        .ch-ring svg {
+            transform: rotate(-90deg)
+        }
+
+        .ch-ring-num {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-family: var(--mono);
+            font-weight: 700
+        }
+
+        .ch-body {
+            flex: 1;
+            min-width: 0
+        }
+
+        .ch-name {
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px
+        }
+
+        .ch-meta {
+            font-size: 11px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .ch-tag {
+            font-size: 10px;
+            font-family: var(--mono);
+            padding: 2px 6px;
+            border-radius: var(--r4);
+            background: var(--surface3);
+            color: var(--muted);
+            flex-shrink: 0
+        }
+
+        .ch-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0
+        }
+
+        .ch-complete-badge {
+            font-size: 10px;
+            font-family: var(--mono);
+            padding: 3px 8px;
+            border-radius: var(--r99);
+            background: #22c55e20;
+            color: #22c55e;
+            font-weight: 700
+        }
+
+        .ch-expand-arrow {
+            color: var(--muted);
+            font-size: 12px;
+            transition: transform 0.2s;
+            width: 16px;
+            text-align: center
+        }
+
+        .ch-expand-arrow.open {
+            transform: rotate(90deg)
+        }
+
+        .ch-del-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: var(--r4);
+            opacity: 0.4;
+            transition: opacity 0.15s;
+            font-size: 12px;
+            line-height: 1
+        }
+
+        .ch-del-btn:hover {
+            opacity: 1;
+            background: var(--danger)15
+        }
+
+        /* ── TASKS PANEL ── */
+        .tasks-panel {
+            padding: 4px 16px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            border-top: 1px solid var(--border)
+        }
+
+        .task-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            background: var(--surface2);
+            border-radius: var(--r8);
+            border: 1px solid transparent;
+            transition: all 0.15s;
+            cursor: pointer
+        }
+
+        .task-row:hover {
+            border-color: var(--border2)
+        }
+
+        .task-row.done {
+            border-color: var(--success)25;
+            background: #22c55e08
+        }
+
+        .task-row.done:hover {
+            border-color: var(--success)40
+        }
+
+        .task-check {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid var(--border2);
+            background: transparent;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            pointer-events: none
+        }
+
+        .task-check.checked {
+            background: var(--success);
+            border-color: var(--success)
+        }
+
+        .task-check-mark {
+            width: 10px;
+            height: 7px;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+            transform: rotate(-45deg) translate(1px, -1px);
+            opacity: 0;
+            transition: opacity 0.1s
+        }
+
+        .task-check.checked .task-check-mark {
+            opacity: 1
+        }
+
+        .task-icon {
+            font-size: 15px;
+            flex-shrink: 0;
+            width: 20px;
+            text-align: center
+        }
+
+        .task-content {
+            flex: 1;
+            min-width: 0
+        }
+
+        .task-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text)
+        }
+
+        .task-row.done .task-label {
+            text-decoration: line-through;
+            color: var(--muted)
+        }
+
+        .task-seq {
+            font-size: 10px;
+            font-family: var(--mono);
+            color: var(--muted)
+        }
+
+        .task-row.done .task-seq {
+            color: var(--success);
+            opacity: 0.7
+        }
+
+        /* ── ADD FORM ── */
+        .add-form {
+            background: var(--surface2);
+            border: 1px solid var(--accent)40;
+            border-radius: var(--r12);
+            padding: 16px;
+            margin-bottom: 10px
+        }
+
+        .form-label {
+            font-size: 11px;
+            color: var(--muted);
+            font-family: var(--mono);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            display: block
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: var(--r8);
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--text);
+            font-family: var(--font);
+            outline: none;
+            transition: border-color 0.15s
+        }
+
+        .form-input:focus {
+            border-color: var(--accent)
+        }
+
+        .form-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px
+        }
+
+        .btn-save {
+            background: var(--accent);
+            color: #1a0d00;
+            border: none;
+            padding: 9px 18px;
+            border-radius: var(--r8);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: var(--mono);
+            transition: opacity 0.15s
+        }
+
+        .btn-save:hover {
+            opacity: 0.9
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 9px 14px;
+            border-radius: var(--r8);
+            font-size: 12px;
+            cursor: pointer;
+            font-family: var(--mono);
+            transition: all 0.15s
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--border2);
+            color: var(--text)
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--muted)
+        }
+
+        .empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px
+        }
+
+        .empty-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px
+        }
+
+        .empty-sub {
+            font-size: 13px
+        }
+
+        /* ── TOAST ── */
+        .toast-wrap {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none
+        }
+
+        .toast {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: var(--r12);
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.25s;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0)
+        }
+
+        .toast-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            flex-shrink: 0
+        }
+
+        .toast.warn .toast-dot {
+            background: var(--danger)
+        }
+
+        /* ── OVERLAY ── */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #00000060;
+            z-index: 90;
+            backdrop-filter: blur(2px)
+        }
+
+        .overlay.show {
+            display: block
+        }
+
+        /* ── PROGRESS TRACKER VIEW ── */
+        .progress-view {
+            display: none
+        }
+
+        .progress-view.active {
+            display: block
+        }
+
+        .chapters-view {
+            display: none
+        }
+
+        .chapters-view.active {
+            display: block
+        }
+
+        .dashboard-view {
+            display: none
+        }
+
+        .dashboard-view.active {
+            display: block
+        }
+
+        /* ── RESPONSIVE ── */
+        @media(max-width:1024px) {
+            :root {
+                --sidebar: 260px
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px
+            }
+
+            .hero-card {
+                flex-direction: column;
+                align-items: flex-start
+            }
+        }
+
+        @media(max-width:768px) {
+            .sidebar {
+                transform: translateX(-100%)
+            }
+
+            .sidebar.open {
+                transform: translateX(0)
+            }
+
+            .main {
+                margin-left: 0
+            }
+
+            .hamburger {
+                display: flex
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px
+            }
+
+            .stats-grid .stat-card:last-child {
+                grid-column: 1/-1
+            }
+
+            .hero-card {
+                padding: 18px;
+                gap: 16px
+            }
+
+            .hero-ring-wrap {
+                width: 100px;
+                height: 100px
+            }
+
+            .hero-pct {
+                font-size: 20px
+            }
+
+            .content {
+                padding: 16px
+            }
+
+            .topbar {
+                padding: 0 16px
+            }
+
+            .toast-wrap {
+                bottom: 16px;
+                right: 16px;
+                left: 16px
+            }
+
+            .toast {
+                font-size: 12px
+            }
+
+            .search-box {
+                display: none
+            }
+        }
+
+        @media(max-width:480px) {
+            .stats-grid {
+                grid-template-columns: 1fr
+            }
+
+            .hero-meta-row {
+                gap: 16px
+            }
+
+            .view-header {
+                flex-direction: column;
+                align-items: flex-start
+            }
+
+            .filter-tabs {
+                overflow-x: auto
+            }
+
+            .ch-head {
+                padding: 12px
+            }
+
+            .tasks-panel {
+                padding: 4px 12px 12px
+            }
+        }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border2);
+            border-radius: 2px
+        }
+
+        .sidebar {
+            overflow-y: auto
+        }
+
+        .chapters-grid {
+            overflow: visible
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .chapter-card {
+            animation: fadeIn 0.2s ease
+        }
+
+        .tasks-panel {
+            animation: fadeIn 0.15s ease
+        }
+
+        /* Confetti burst */
+        @keyframes confettiFly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) rotate(0deg) scale(1)
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) rotate(var(--tr)) scale(0)
+            }
+        }
+
+        .confetti-piece {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: confettiFly 0.8s ease-out forwards
+        }
+    </style>
+</head>
+
+<body>
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+    <div class="app-shell">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-row">
+                    <div class="brand-icon">🚀</div>
+                    <div>
+                        <div class="brand-name">JEE PREP METER</div>
+                        <div class="brand-sub">Mains + Advanced · 2028</div>
+                    </div>
+                </div>
+                <div class="overall-mini">
+                    <div class="overall-mini-label">Overall Progress</div>
+                    <div class="overall-mini-row">
+                        <div class="overall-mini-pct" id="sb-overall-pct">0%</div>
+                        <div class="overall-mini-frac" id="sb-overall-frac">0/0 tasks</div>
+                    </div>
+                    <div class="mini-bar">
+                        <div class="mini-bar-fill" id="sb-bar" style="width:0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Overview</div>
+                <div class="nav-item active" id="nav-dashboard" onclick="showView('dashboard')">
+                    <span style="font-size:16px">📊</span>
+                    <span class="nav-item-name">Dashboard</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Subjects</div>
+                <div class="nav-item" id="nav-Physics" onclick="showView('chapters','Physics')">
+                    <div class="nav-dot" style="background:var(--phy)"></div>
+                    <span class="nav-item-name">Physics</span>
+                    <span class="nav-pct" id="sb-pct-Physics">0%</span>
+                </div>
+                <div class="nav-item" id="nav-Chemistry" onclick="showView('chapters','Chemistry')">
+                    <div class="nav-dot" style="background:var(--chem)"></div>
+                    <span class="nav-item-name">Chemistry</span>
+                    <span class="nav-pct" id="sb-pct-Chemistry">0%</span>
+                </div>
+                <div class="nav-item" id="nav-Mathematics" onclick="showView('chapters','Mathematics')">
+                    <div class="nav-dot" style="background:var(--math)"></div>
+                    <span class="nav-item-name">Mathematics</span>
+                    <span class="nav-pct" id="sb-pct-Mathematics">0%</span>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="exam-countdown">
+                    <div class="cd-label">JEE Advanced 2028</div>
+                    <div class="cd-days" id="countdown-days">---</div>
+                    <div class="cd-sub">days remaining</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <div class="main">
+            <div class="topbar">
+                <button class="hamburger" id="hamburger" onclick="toggleSidebar()">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="topbar-title" id="topbar-title">Dashboard</div>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-input" placeholder="Search chapters..."
+                        oninput="handleSearch(this.value)">
+                </div>
+            </div>
+
+            <div class="content">
+
+                <!-- DASHBOARD VIEW -->
+                <div class="dashboard-view active" id="view-dashboard">
+                    <div class="hero-card" id="hero-card">
+                        <div class="hero-ring-wrap">
+                            <svg width="120" height="120" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" fill="none" stroke="#1e2440" stroke-width="10" />
+                                <circle cx="60" cy="60" r="52" fill="none" stroke="url(#heroGrad)" stroke-width="10"
+                                    stroke-linecap="round" id="hero-ring-circle" stroke-dasharray="326.7"
+                                    stroke-dashoffset="326.7" />
+                                <defs>
+                                    <linearGradient id="heroGrad" x1="0" y1="0" x2="1" y2="0">
+                                        <stop offset="0%" stop-color="#3b82f6" />
+                                        <stop offset="50%" stop-color="#f59e0b" />
+                                        <stop offset="100%" stop-color="#22c55e" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="hero-ring-center">
+                                <div class="hero-pct" id="hero-pct">0%</div>
+                                <div class="hero-pct-lbl">done</div>
+                            </div>
+                        </div>
+                        <div class="hero-info">
+                            <div class="hero-title">Your JEE 2028 Journey</div>
+                            <div class="hero-subtitle">Class 11 → 12 → Mains + Advanced</div>
+                            <div class="hero-meta-row">
+                                <div class="hero-meta-item">
+                                    <div class="hero-meta-num" id="hero-tasks-done">0</div>
+                                    <div class="hero-meta-lbl">Tasks Done</div>
+                                </div>
+                                <div class="hero-meta-item">
+                                    <div class="hero-meta-num" id="hero-chapters-done">0</div>
+                                    <div class="hero-meta-lbl">Chapters Complete</div>
+                                </div>
+                                <div class="hero-meta-item">
+                                    <div class="hero-meta-num" id="hero-total-chapters">0</div>
+                                    <div class="hero-meta-lbl">Total Chapters</div>
+                                </div>
+                            </div>
+                            <div class="hero-subject-bars">
+                                <div class="hsb-row">
+                                    <div class="hsb-label">PHY</div>
+                                    <div class="hsb-bar">
+                                        <div class="hsb-fill" id="bar-Physics" style="width:0%;background:var(--phy)">
+                                        </div>
+                                    </div>
+                                    <div class="hsb-pct" id="barpct-Physics">0%</div>
+                                </div>
+                                <div class="hsb-row">
+                                    <div class="hsb-label">CHEM</div>
+                                    <div class="hsb-bar">
+                                        <div class="hsb-fill" id="bar-Chemistry"
+                                            style="width:0%;background:var(--chem)"></div>
+                                    </div>
+                                    <div class="hsb-pct" id="barpct-Chemistry">0%</div>
+                                </div>
+                                <div class="hsb-row">
+                                    <div class="hsb-label">MATH</div>
+                                    <div class="hsb-bar">
+                                        <div class="hsb-fill" id="bar-Mathematics"
+                                            style="width:0%;background:var(--math)"></div>
+                                    </div>
+                                    <div class="hsb-pct" id="barpct-Mathematics">0%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card phy" id="sc-Physics" onclick="showView('chapters','Physics')"
+                            style="cursor:pointer">
+                            <div class="stat-top">
+                                <div class="stat-icon">⚡</div>
+                                <div class="stat-badge" id="scb-Physics">0%</div>
+                            </div>
+                            <div class="stat-num" id="scn-Physics">0%</div>
+                            <div class="stat-label">Physics</div>
+                            <div class="stat-bar">
+                                <div class="stat-bar-fill" id="scbar-Physics" style="width:0%;background:var(--phy)">
+                                </div>
+                            </div>
+                            <div class="stat-meta"><span id="scmeta-Physics">0/0 tasks</span><span id="scch-Physics">0
+                                    chapters</span></div>
+                        </div>
+                        <div class="stat-card chem" id="sc-Chemistry" onclick="showView('chapters','Chemistry')"
+                            style="cursor:pointer">
+                            <div class="stat-top">
+                                <div class="stat-icon">🧪</div>
+                                <div class="stat-badge" id="scb-Chemistry">0%</div>
+                            </div>
+                            <div class="stat-num" id="scn-Chemistry">0%</div>
+                            <div class="stat-label">Chemistry</div>
+                            <div class="stat-bar">
+                                <div class="stat-bar-fill" id="scbar-Chemistry" style="width:0%;background:var(--chem)">
+                                </div>
+                            </div>
+                            <div class="stat-meta"><span id="scmeta-Chemistry">0/0 tasks</span><span
+                                    id="scch-Chemistry">0 chapters</span></div>
+                        </div>
+                        <div class="stat-card math" id="sc-Mathematics" onclick="showView('chapters','Mathematics')"
+                            style="cursor:pointer">
+                            <div class="stat-top">
+                                <div class="stat-icon">📐</div>
+                                <div class="stat-badge" id="scb-Mathematics">0%</div>
+                            </div>
+                            <div class="stat-num" id="scn-Mathematics">0%</div>
+                            <div class="stat-label">Mathematics</div>
+                            <div class="stat-bar">
+                                <div class="stat-bar-fill" id="scbar-Mathematics"
+                                    style="width:0%;background:var(--math)"></div>
+                            </div>
+                            <div class="stat-meta"><span id="scmeta-Mathematics">0/0 tasks</span><span
+                                    id="scch-Mathematics">0 chapters</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHAPTERS VIEW -->
+                <div class="chapters-view" id="view-chapters">
+                    <div class="view-header">
+                        <div class="view-title-group">
+                            <div class="view-subject-dot" id="view-dot"></div>
+                            <div>
+                                <div class="view-title" id="view-title">Physics</div>
+                                <div class="view-subtitle" id="view-subtitle">0 chapters · 0% complete</div>
+                            </div>
+                        </div>
+                        <div class="view-actions">
+                            <div class="filter-tabs">
+                                <button class="filter-tab active" id="ft-all" onclick="setFilter('all')">All</button>
+                                <button class="filter-tab" id="ft-inprogress" onclick="setFilter('inprogress')">In
+                                    Progress</button>
+                                <button class="filter-tab" id="ft-done" onclick="setFilter('done')">Done</button>
+                                <button class="filter-tab" id="ft-todo" onclick="setFilter('todo')">To Do</button>
+                            </div>
+                            <button class="add-ch-btn" onclick="startAdd()">+ Chapter</button>
+                        </div>
+                    </div>
+                    <div id="add-form-container"></div>
+                    <div class="chapters-grid" id="chapters-grid"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast-wrap" id="toast-wrap">
+        <div class="toast" id="toast">
+            <div class="toast-dot"></div><span id="toast-msg"></span>
+        </div>
+    </div>
+
+    <script>
+        // ── DATA ──
+        const TASKS = [
+            { id: 'lecture', label: 'Concept Learning / Lectures', icon: '📖', seq: 'Step 1' },
+            { id: 'dpp', label: 'DPP (Daily Practice Problems)', icon: '✏️', seq: 'Step 2' },
+            { id: 'module', label: 'Module Questions', icon: '📚', seq: 'Step 3' },
+            { id: 'pyq', label: 'Previous Year Questions (PYQs)', icon: '🏆', seq: 'Step 4' },
+            { id: 'daily_rev', label: 'Daily Revision', icon: '🔄', seq: 'Step 5' },
+            { id: 'weekly_rev', label: 'Weekly Revision + Test', icon: '📊', seq: 'Step 6' },
+            { id: 'monthly_rev', label: 'Monthly Revision + Test', icon: '🎯', seq: 'Step 7' },
+        ];
+
+        const SUBJECT_META = {
+            Physics: { color: 'var(--phy)', dot: '#3b82f6', cls: 'phy', icon: '⚡' },
+            Chemistry: { color: 'var(--chem)', dot: '#22c55e', cls: 'chem', icon: '🧪' },
+            Mathematics: { color: 'var(--math)', dot: '#f59e0b', cls: 'math', icon: '📐' },
+        };
+
+        // Complete official JEE Mains + Advanced syllabus (NTA official PDF 2026)
+        const DEFAULT_CHAPTERS = {
+            Physics: [
+                // Class 11
+                { name: 'Units & Measurements', class: '11' },
+                { name: 'Kinematics', class: '11' },
+                { name: 'Laws of Motion', class: '11' },
+                { name: 'Work, Energy & Power', class: '11' },
+                { name: 'Rotational Motion & Rigid Body Dynamics', class: '11' },
+                { name: 'Gravitation', class: '11' },
+                { name: 'Properties of Solids & Liquids', class: '11' },
+                { name: 'Thermodynamics', class: '11' },
+                { name: 'Kinetic Theory of Gases', class: '11' },
+                { name: 'Oscillations (SHM)', class: '11' },
+                { name: 'Waves & Sound', class: '11' },
+                // Class 12
+                { name: 'Electrostatics', class: '12' },
+                { name: 'Capacitors', class: '12' },
+                { name: 'Current Electricity', class: '12' },
+                { name: 'Magnetic Effects of Current', class: '12' },
+                { name: 'Magnetism & Magnetic Properties', class: '12' },
+                { name: 'Electromagnetic Induction', class: '12' },
+                { name: 'Alternating Currents (AC)', class: '12' },
+                { name: 'Electromagnetic Waves', class: '12' },
+                { name: 'Ray Optics & Optical Instruments', class: '12' },
+                { name: 'Wave Optics', class: '12' },
+                { name: 'Dual Nature of Matter & Radiation', class: '12' },
+                { name: 'Atoms & Nuclei', class: '12' },
+                { name: 'Semiconductor Electronics & Devices', class: '12' },
+                { name: 'Experimental Skills', class: '12' },
+            ],
+            Chemistry: [
+                // Physical Chemistry
+                { name: 'Some Basic Concepts of Chemistry', class: '11', branch: 'Physical' },
+                { name: 'Atomic Structure', class: '11', branch: 'Physical' },
+                { name: 'States of Matter: Gases & Liquids', class: '11', branch: 'Physical' },
+                { name: 'Thermodynamics', class: '11', branch: 'Physical' },
+                { name: 'Equilibrium (Chemical & Ionic)', class: '11', branch: 'Physical' },
+                { name: 'Redox Reactions', class: '11', branch: 'Physical' },
+                { name: 'Solutions', class: '12', branch: 'Physical' },
+                { name: 'Electrochemistry', class: '12', branch: 'Physical' },
+                { name: 'Chemical Kinetics', class: '12', branch: 'Physical' },
+                { name: 'Surface Chemistry', class: '12', branch: 'Physical' },
+                // Inorganic Chemistry
+                { name: 'Periodic Table & Periodicity', class: '11', branch: 'Inorganic' },
+                { name: 'Chemical Bonding & Molecular Structure', class: '11', branch: 'Inorganic' },
+                { name: 'Hydrogen', class: '11', branch: 'Inorganic' },
+                { name: 's-Block Elements (Alkali & Alkaline)', class: '11', branch: 'Inorganic' },
+                { name: 'p-Block Elements (Group 13–14)', class: '11', branch: 'Inorganic' },
+                { name: 'p-Block Elements (Group 15–18)', class: '12', branch: 'Inorganic' },
+                { name: 'd & f Block Elements', class: '12', branch: 'Inorganic' },
+                { name: 'Coordination Compounds', class: '12', branch: 'Inorganic' },
+                { name: 'General Principles of Metallurgy', class: '12', branch: 'Inorganic' },
+                // Organic Chemistry
+                { name: 'Organic Chemistry: Basic Principles', class: '11', branch: 'Organic' },
+                { name: 'Hydrocarbons (Alkanes, Alkenes, Alkynes)', class: '11', branch: 'Organic' },
+                { name: 'Environmental Chemistry', class: '11', branch: 'Organic' },
+                { name: 'Haloalkanes & Haloarenes', class: '12', branch: 'Organic' },
+                { name: 'Alcohols, Phenols & Ethers', class: '12', branch: 'Organic' },
+                { name: 'Aldehydes, Ketones & Carboxylic Acids', class: '12', branch: 'Organic' },
+                { name: 'Amines', class: '12', branch: 'Organic' },
+                { name: 'Biomolecules', class: '12', branch: 'Organic' },
+                { name: 'Polymers', class: '12', branch: 'Organic' },
+                { name: 'Chemistry in Everyday Life', class: '12', branch: 'Organic' },
+            ],
+            Mathematics: [
+                // Class 11
+                { name: 'Sets, Relations & Functions', class: '11' },
+                { name: 'Complex Numbers & Quadratic Equations', class: '11' },
+                { name: 'Matrices & Determinants', class: '12' },
+                { name: 'Permutations & Combinations', class: '11' },
+                { name: 'Binomial Theorem', class: '11' },
+                { name: 'Sequences & Series (AP, GP, HP)', class: '11' },
+                { name: 'Trigonometric Functions & Equations', class: '11' },
+                { name: 'Inverse Trigonometric Functions', class: '12' },
+                { name: 'Straight Lines & Pair of Lines', class: '11' },
+                { name: 'Circles', class: '11' },
+                { name: 'Conic Sections (Parabola, Ellipse, Hyperbola)', class: '11' },
+                { name: 'Three Dimensional Geometry', class: '12' },
+                { name: 'Vector Algebra', class: '12' },
+                { name: 'Limits, Continuity & Differentiability', class: '11' },
+                { name: 'Differentiation & Applications of Derivatives', class: '12' },
+                { name: 'Indefinite Integration', class: '12' },
+                { name: 'Definite Integration & Area Under Curves', class: '12' },
+                { name: 'Differential Equations', class: '12' },
+                { name: 'Statistics & Measures of Dispersion', class: '11' },
+                { name: 'Probability & Bayes\' Theorem', class: '12' },
+                { name: 'Mathematical Reasoning (JEE Main)', class: '11' },
+            ],
+        };
+
+        // ── STATE ──
+        function makeChapters() {
+            const out = {};
+            Object.keys(DEFAULT_CHAPTERS).forEach(sub => {
+                out[sub] = DEFAULT_CHAPTERS[sub].map(ch => ({
+                    id: sub.slice(0, 3) + '_' + ch.name.replace(/\W+/g, '_').toLowerCase().slice(0, 20) + '_' + Math.random().toString(36).slice(2, 7),
+                    name: ch.name,
+                    class: ch.class || '11',
+                    branch: ch.branch || null,
+                    tasks: Object.fromEntries(TASKS.map(t => [t.id, false]))
+                }));
+            });
+            return out;
+        }
+
+        function loadState() {
+            try {
+                const s = localStorage.getItem('jee_prep_2028_v2');
+                if (s) {
+                    const p = JSON.parse(s);
+                    // migrate old state if needed
+                    if (!p.chapters) return null;
+                    return p;
+                }
+            } catch (e) { }
+            return null;
+        }
+
+        let state = loadState() || {
+            chapters: makeChapters(),
+            expanded: {},
+            currentView: 'dashboard',
+            currentSubject: 'Physics',
+            filter: 'all',
+        };
+
+        function save() {
+            try { localStorage.setItem('jee_prep_2028_v2', JSON.stringify(state)); } catch (e) { }
+        }
+
+        // ── CALCULATIONS ──
+        function chDone(ch) { return TASKS.filter(t => ch.tasks[t.id]).length; }
+        function chPct(ch) { return Math.round(chDone(ch) / TASKS.length * 100); }
+        function isComplete(ch) { return chDone(ch) === TASKS.length; }
+        function subStats(sub) {
+            const chs = state.chapters[sub] || [];
+            const total = chs.length * TASKS.length;
+            const done = chs.reduce((a, c) => a + chDone(c), 0);
+            const completedChs = chs.filter(isComplete).length;
+            return { total, done, pct: total ? Math.round(done / total * 100) : 0, completedChs, totalChs: chs.length };
+        }
+        function overallStats() {
+            let total = 0, done = 0, completedChs = 0, totalChs = 0;
+            ['Physics', 'Chemistry', 'Mathematics'].forEach(s => {
+                const st = subStats(s); total += st.total; done += st.done; completedChs += st.completedChs; totalChs += st.totalChs;
+            });
+            return { total, done, pct: total ? Math.round(done / total * 100) : 0, completedChs, totalChs };
+        }
+
+        // ── COUNTDOWN ──
+        function updateCountdown() {
+            const target = new Date('2028-05-20');
+            const now = new Date();
+            const days = Math.max(0, Math.ceil((target - now) / (1000 * 60 * 60 * 24)));
+            document.getElementById('countdown-days').textContent = days.toLocaleString();
+        }
+
+        // ── RING SVG ──
+        function ringHTML(pct, color, size = 44, stroke = 4) {
+            const r = (size - stroke * 2) / 2;
+            const cx = size / 2, cy = size / 2;
+            const circ = 2 * Math.PI * r;
+            const off = circ - (pct / 100) * circ;
+            return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#1e2440" stroke-width="${stroke}"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}"
+      stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" stroke-linecap="round"/>
+  </svg>`;
+        }
+
+        // ── UPDATE SIDEBAR & STATS ──
+        function updateStats() {
+            const ov = overallStats();
+            document.getElementById('sb-overall-pct').textContent = ov.pct + '%';
+            document.getElementById('sb-overall-frac').textContent = `${ov.done}/${ov.total} tasks`;
+            document.getElementById('sb-bar').style.width = ov.pct + '%';
+
+            ['Physics', 'Chemistry', 'Mathematics'].forEach(sub => {
+                const st = subStats(sub);
+                document.getElementById('sb-pct-' + sub).textContent = st.pct + '%';
+                // stat cards
+                document.getElementById('scn-' + sub).textContent = st.pct + '%';
+                document.getElementById('scb-' + sub).textContent = st.pct + '%';
+                document.getElementById('scbar-' + sub).style.width = st.pct + '%';
+                document.getElementById('scmeta-' + sub).textContent = `${st.done}/${st.total} tasks`;
+                document.getElementById('scch-' + sub).textContent = `${st.totalChs} chapters`;
+                // hero bars
+                document.getElementById('bar-' + sub).style.width = st.pct + '%';
+                document.getElementById('barpct-' + sub).textContent = st.pct + '%';
+            });
+
+            // hero ring
+            const circ = 2 * Math.PI * 52;
+            const off = circ - (ov.pct / 100) * circ;
+            document.getElementById('hero-ring-circle').setAttribute('stroke-dashoffset', off.toFixed(1));
+            document.getElementById('hero-pct').textContent = ov.pct + '%';
+            document.getElementById('hero-tasks-done').textContent = ov.done;
+            document.getElementById('hero-chapters-done').textContent = ov.completedChs;
+            document.getElementById('hero-total-chapters').textContent = ov.totalChs;
+        }
+
+        // ── VIEWS ──
+        function showView(view, subject) {
+            state.currentView = view;
+            if (subject) state.currentSubject = subject;
+
+            document.getElementById('view-dashboard').classList.toggle('active', view === 'dashboard');
+            document.getElementById('view-chapters').classList.toggle('active', view === 'chapters');
+
+            // nav active
+            ['dashboard', 'Physics', 'Chemistry', 'Mathematics'].forEach(id => {
+                const el = document.getElementById('nav-' + (id === 'dashboard' ? 'dashboard' : id));
+                if (el) el.classList.toggle('active',
+                    (view === 'dashboard' && id === 'dashboard') ||
+                    (view === 'chapters' && id === state.currentSubject)
+                );
+            });
+
+            if (view === 'chapters') renderChapters();
+            document.getElementById('topbar-title').textContent = view === 'dashboard' ? 'Dashboard' : state.currentSubject;
+            closeSidebar();
+            save();
+        }
+
+        // ── CHAPTERS RENDER ──
+        let searchQuery = '';
+        let addFormVisible = false;
+        let addFormValue = '';
+
+        function setFilter(f) {
+            state.filter = f;
+            ['all', 'inprogress', 'done', 'todo'].forEach(id => {
+                document.getElementById('ft-' + id).classList.toggle('active', id === f);
+            });
+            renderChapters();
+        }
+
+        function handleSearch(q) {
+            searchQuery = q.toLowerCase();
+            renderChapters();
+        }
+
+        function renderChapters() {
+            const sub = state.currentSubject;
+            const meta = SUBJECT_META[sub];
+            const st = subStats(sub);
+            const chapters = state.chapters[sub] || [];
+
+            document.getElementById('view-dot').style.background = meta.dot;
+            document.getElementById('view-dot').style.width = '10px';
+            document.getElementById('view-dot').style.height = '10px';
+            document.getElementById('view-dot').style.borderRadius = '50%';
+            document.getElementById('view-title').textContent = sub;
+            document.getElementById('view-subtitle').textContent = `${st.totalChs} chapters · ${st.pct}% complete · ${st.completedChs} fully done`;
+
+            // filter
+            let filtered = chapters.filter(ch => {
+                if (searchQuery && !ch.name.toLowerCase().includes(searchQuery)) return false;
+                if (state.filter === 'done') return isComplete(ch);
+                if (state.filter === 'todo') return chDone(ch) === 0;
+                if (state.filter === 'inprogress') return chDone(ch) > 0 && !isComplete(ch);
+                return true;
+            });
+
+            // add form
+            const formContainer = document.getElementById('add-form-container');
+            if (addFormVisible) {
+                formContainer.innerHTML = `
+      <div class="add-form">
+        <label class="form-label">New Chapter Name</label>
+        <input class="form-input" id="ch-input" placeholder="e.g. Nuclear Physics" value="${addFormValue}" 
+          oninput="addFormValue=this.value" onkeydown="if(event.key==='Enter')saveChapter();if(event.key==='Escape')cancelAdd()">
+        <div class="form-row">
+          <button class="btn-save" onclick="saveChapter()">Add Chapter</button>
+          <button class="btn-cancel" onclick="cancelAdd()">Cancel</button>
+        </div>
+      </div>`;
+                setTimeout(() => { const el = document.getElementById('ch-input'); if (el) { el.focus(); el.selectionStart = el.selectionEnd = el.value.length; } }, 30);
+            } else { formContainer.innerHTML = ''; }
+
+            // chapters
+            const grid = document.getElementById('chapters-grid');
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">${searchQuery ? '🔍' : '📂'}</div>
+      <div class="empty-title">${searchQuery ? 'No chapters found' : 'No chapters here'}</div>
+      <div class="empty-sub">${searchQuery ? 'Try a different search term' : 'Add your first chapter above!'}</div>
+    </div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(ch => chapterCardHTML(ch, sub, meta)).join('');
+        }
+
+        function chapterCardHTML(ch, sub, meta) {
+            const done = chDone(ch);
+            const pct = chPct(ch);
+            const complete = isComplete(ch);
+            const isExp = state.expanded[ch.id];
+            const classBadge = ch.class ? `<span class="ch-tag">Class ${ch.class}</span>` : '';
+            const branchBadge = ch.branch ? `<span class="ch-tag">${ch.branch}</span>` : '';
+            const completeBadge = complete ? `<span class="ch-complete-badge">✓ DONE</span>` : '';
+
+            const taskRows = isExp ? TASKS.map(t => {
+                const checked = ch.tasks[t.id];
+                return `<div class="task-row${checked ? ' done' : ''}" onclick="toggleTask('${sub}','${ch.id}','${t.id}')">
+      <div class="task-check${checked ? ' checked' : ''}"><div class="task-check-mark"></div></div>
+      <div class="task-icon">${t.icon}</div>
+      <div class="task-content">
+        <div class="task-label">${t.label}</div>
+        <div class="task-seq">${t.seq}${checked ? ' · Completed' : ''}</div>
+      </div>
+    </div>`;
+            }).join('') : '';
+
+            return `<div class="chapter-card${isExp ? ' expanded' : ''}${complete ? ' complete' : ''}" id="card-${ch.id}" style="--c:${meta.dot}">
+    <div class="ch-head" onclick="toggleExpand('${ch.id}')">
+      <div class="ch-ring">
+        ${ringHTML(pct, meta.dot, 44, 4)}
+        <div class="ch-ring-num" style="color:${meta.dot}">${pct}%</div>
+      </div>
+      <div class="ch-body">
+        <div class="ch-name">${ch.name}</div>
+        <div class="ch-meta">${done}/${TASKS.length} tasks ${classBadge}${branchBadge}</div>
+      </div>
+      <div class="ch-right">
+        ${completeBadge}
+        <button class="ch-del-btn" onclick="deleteChapter(event,'${sub}','${ch.id}')">✕</button>
+        <div class="ch-expand-arrow${isExp ? ' open' : ''}">▶</div>
+      </div>
+    </div>
+    ${isExp ? `<div class="tasks-panel">${taskRows}</div>` : ''}
+  </div>`;
+        }
+
+        // ── INTERACTIONS ──
+        function toggleExpand(id) {
+            state.expanded[id] = !state.expanded[id];
+            save();
+            if (state.currentView === 'chapters') renderChapters();
+        }
+
+        function toggleTask(sub, chId, taskId) {
+            const ch = (state.chapters[sub] || []).find(c => c.id === chId);
+            if (!ch) return;
+            ch.tasks[taskId] = !ch.tasks[taskId];
+            const wasDone = ch.tasks[taskId];
+            if (wasDone && isComplete(ch)) {
+                showToast('Chapter Complete! 🎉', 'success');
+                spawnConfetti();
+            } else if (wasDone) {
+                showToast(TASKS.find(t => t.id === taskId).label + ' done ✓', 'success');
+            }
+            save();
+            updateStats();
+            if (state.currentView === 'chapters') renderChapters();
+        }
+
+        function deleteChapter(e, sub, chId) {
+            e.stopPropagation();
+            if (!confirm('Delete this chapter?')) return;
+            state.chapters[sub] = (state.chapters[sub] || []).filter(c => c.id !== chId);
+            save();
+            updateStats();
+            renderChapters();
+            showToast('Chapter deleted', 'warn');
+        }
+
+        function startAdd() { addFormVisible = true; addFormValue = ''; renderChapters(); }
+        function cancelAdd() { addFormVisible = false; addFormValue = ''; renderChapters(); }
+
+        function saveChapter() {
+            const input = document.getElementById('ch-input');
+            const name = (input ? input.value : addFormValue).trim();
+            if (!name) { input && input.focus(); return; }
+            const sub = state.currentSubject;
+            if (!state.chapters[sub]) state.chapters[sub] = [];
+            state.chapters[sub].push({
+                id: sub.slice(0, 3) + '_custom_' + Date.now(),
+                name,
+                class: 'custom',
+                branch: null,
+                tasks: Object.fromEntries(TASKS.map(t => [t.id, false]))
+            });
+            addFormVisible = false; addFormValue = '';
+            showToast('Chapter "' + name + '" added!', 'success');
+            save(); updateStats(); renderChapters();
+        }
+
+        // ── SIDEBAR ──
+        function toggleSidebar() {
+            const sb = document.getElementById('sidebar');
+            const ov = document.getElementById('overlay');
+            const open = sb.classList.toggle('open');
+            ov.classList.toggle('show', open);
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        // ── TOAST ──
+        let toastTimer;
+        function showToast(msg, type = 'success') {
+            const t = document.getElementById('toast');
+            const d = t.querySelector('.toast-dot');
+            document.getElementById('toast-msg').textContent = msg;
+            d.style.background = type === 'warn' ? 'var(--danger)' : 'var(--success)';
+            t.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+        }
+
+        // ── CONFETTI ──
+        function spawnConfetti() {
+            const colors = ['#f59e0b', '#3b82f6', '#22c55e', '#ef4444', '#a855f7', '#ec4899'];
+            for (let i = 0; i < 18; i++) {
+                const el = document.createElement('div');
+                el.className = 'confetti-piece';
+                el.style.cssText = `
+      left:${40 + Math.random() * 20}vw;top:${30 + Math.random() * 20}vh;
+      background:${colors[i % colors.length]};
+      --tx:${(Math.random() - 0.5) * 200}px;
+      --ty:${-100 - Math.random() * 150}px;
+      --tr:${Math.random() * 720}deg;
+      animation-delay:${Math.random() * 0.3}s;
+    `;
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 1200);
+            }
+        }
+
+        // ── INIT ──
+        updateCountdown();
+        updateStats();
+        showView(state.currentView, state.currentSubject);
+        setFilter(state.filter || 'all');
+    </script>
+</body>
+
+</html>
